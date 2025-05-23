@@ -4,18 +4,24 @@
  */
 package controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import model.UserDAO;
+import model.UserDTO;
 
 /**
  *
  * @author ddhuy
  */
-public class BangCuuChuongXServlet extends HttpServlet {
+@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
+public class MainController extends HttpServlet {
+
+    private static String WELLCOME = "login.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -26,31 +32,32 @@ public class BangCuuChuongXServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        /* TODO output your page here. You may use following sample code. */
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>Servlet BangCuuChuong</title>");
-        out.println("</head>");
-        out.println("<body>");
+        String url = WELLCOME;
         try {
-            String strX = request.getParameter("x");
-            int i = Integer.parseInt(strX);
-
-            out.println("<h3>Bang cuu chuong " + i + " </h3>");
-            for (int j = 1; j <= 10; j++) {
-                out.println(i + " x " + j + " = " + (i * j) + "<br/>");
+            String action = request.getParameter("action");
+            if (action.equals("login")) {
+                String userID = request.getParameter("strUserID");
+                String password = request.getParameter("strPassword");
+                UserDAO userDAO = new UserDAO();
+                if (userDAO.login(userID, password)) {
+                    //login success
+                    url = "welcome.jsp";
+                    UserDTO user = userDAO.getUserById(userID);
+                    request.setAttribute("user", user);
+                } else {
+                    //login failed
+                    url = "login.jsp";
+                    request.setAttribute("message", "UserID or Password incorrect!");
+                }
             }
         } catch (Exception e) {
-            out.println("Da xay ra loi nhap lieu !");
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
 
-        out.println("</body>");
-        out.println("</html>");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
