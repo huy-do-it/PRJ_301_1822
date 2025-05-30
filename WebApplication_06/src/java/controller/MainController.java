@@ -22,20 +22,21 @@ import model.UserDTO;
 public class MainController extends HttpServlet {
 
     private static String WELCOME = "login.jsp";
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
+    private boolean isUserAction(String action){
+         return "login".equals(action)
+                || "logout".equals(action)
+                || "register".equals(action)
+                || "updateProfile".equals(action)
+                || "viewProfile".equals(action)
+                || "changePassword".equals(action);
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = WELCOME;
+        
         try {
             String action = request.getParameter("action");
             if (action.equals("login")) {
@@ -53,6 +54,7 @@ public class MainController extends HttpServlet {
                     request.setAttribute("message", "UserID or Password incorrect!");
                 }
             }
+            
         } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);

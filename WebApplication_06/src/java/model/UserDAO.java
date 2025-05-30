@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -34,30 +35,30 @@ public class UserDAO {
     public UserDTO getUserById(String id) {
         UserDTO user = null;
         try {
-            // B0 - create sql
-            String sql = "SELECT * FROM tblUsers WHERE userID = '" + id + "'";
+            // B0 - Tao sql
+            String sql = "SELECT * FROM tblUsers WHERE userID=? ";
 
-            // B1 - connect
+            // B1 - ket noi
             Connection conn = DbUtils.getConnection();
 
-            // B2 - create tool to excute query sql
-            Statement st = conn.createStatement();
+            // B2 - Tao cong cu de thuc thi cau lenh sql
+            // Statement st = conn.createStatement();
+            PreparedStatement pr = conn.prepareStatement(sql);
+            pr.setString(1, id);
+            
+            // B3 - Thuc thi cau lenh
+            ResultSet rs = pr.executeQuery();
 
-            // B3 - excute query
-            ResultSet rs = st.executeQuery(sql);
-
-            // B4 - Duyet table
+            // B4 - Duyet bang
             while (rs.next()) {
                 String userID = rs.getString("userID");
                 String fullName = rs.getString("fullName");
                 String password = rs.getString("password");
                 String roleID = rs.getString("roleID");
                 boolean status = rs.getBoolean("status");
-
+                
                 user = new UserDTO(userID, password, fullName, roleID, status);
-                System.out.println(user);
             }
-
         } catch (Exception e) {
             System.out.println(e);
         }

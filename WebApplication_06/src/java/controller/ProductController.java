@@ -11,17 +11,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.UserDAO;
-import model.UserDTO;
 
 /**
  *
  * @author ddhuy
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
-public class MainController extends HttpServlet {
-
-    private static String WELCOME = "login.jsp";
+@WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
+public class ProductController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,29 +31,18 @@ public class MainController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = WELCOME;
-        try {
-            String action = request.getParameter("action");
-            if (action.equals("login")) {
-                String userID = request.getParameter("strUserID");
-                String password = request.getParameter("strPassword");
-                UserDAO userDAO = new UserDAO();
-                if (userDAO.login(userID, password)) {
-                    //login success
-                    url = "welcome.jsp";
-                    UserDTO user = userDAO.getUserById(userID);
-                    request.setAttribute("user", user);
-                } else {
-                    //login failed
-                    url = "login.jsp";
-                    request.setAttribute("message", "UserID or Password incorrect!");
-                }
-            }
-        } catch (Exception e) {
-        } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+        try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ProductController</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

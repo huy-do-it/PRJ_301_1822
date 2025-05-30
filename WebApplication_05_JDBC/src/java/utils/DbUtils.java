@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author ddhuy
  */
-public class DbUttils {
+public class DbUtils {
     private static final String DB_NAME = "PRJ301_PROJECT1";
     private static final String DB_USER_NAME = "sa";
     private static final String DB_PASSWORD = "12345";
@@ -28,11 +28,11 @@ public class DbUttils {
     }
     public static void main(String[] args) {
         try {
-            System.out.println(DbUttils.getConnection());
+            System.out.println(DbUtils.getConnection());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DbUttils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbUtils.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DbUttils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
