@@ -32,9 +32,6 @@ public class MainController extends HttpServlet {
                 || "changePassword".equals(action);
     }
     
-    private boolean isProductAction(String action) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -43,9 +40,8 @@ public class MainController extends HttpServlet {
         try {
             String action = request.getParameter("action");
             if (isUserAction(action)) 
-               url = "/UserController";
-            else if(isProductAction(action))
-                url = "/ProductController";
+                url = "/UserController";
+            
         } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);

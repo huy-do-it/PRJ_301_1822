@@ -5,6 +5,7 @@
 --%>
 <%@page import="model.UserDTO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="utils.AuthUtils" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,17 +14,19 @@
     </head>
     <body>
         <%
-            UserDTO user = (UserDTO)session.getAttribute("user"); 
-            if(user == null){
-                response.sendRedirect("MainController");
-            }else{
+    if(AuthUtils.isLoggedIn(request)){
+        UserDTO user = AuthUtils.getCurrentUser(request);
         %>
         <h1>Hello anh zaiiii <%= user.getFullName() %>!</h1>
         <form action="MainController" method="post">
             <input type="hidden" name="action" value="logout"/>
-            <!--<a href="MainController?action=logout">Logout </a> chơi trực tiếp với Controller-->
+<!--            <a href="MainController?action=logout">Logout </a> chơi trực tiếp với Controller-->
             <input type="submit" value="Logout"/>
         </form>
-        <%}%>
+        
+        <% } else { %>
+        <%=AuthUtils.getAccessDeniedMessage("welcome.jsp")%> <br/>
+        (Or <a href="<%=AuthUtils.getLoginURL()%>">Login</a>)
+        <% } %>
     </body>
 </html>
