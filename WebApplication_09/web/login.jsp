@@ -21,7 +21,7 @@
                 Object objMS = request.getAttribute("message");
                 String msg = (objMS==null)?"":(objMS+"");
             %>
-            <form action="MainController" method="post">
+            <form action="MainController" method="get">
                 <input type="hidden" name="action" value="login"/>
                 UserID : <input type="text" name="strUserID" /> <br/> 
                 Password : <input type="password" name="strPassword" /> </br>

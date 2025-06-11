@@ -35,6 +35,9 @@ public class ProductController extends HttpServlet {
             String action = request.getParameter("action");
             if ("addProduct".equals(action)) {
                 url = handleProductAdding(request, response);
+            }else if("searcProduct".equals(action)){
+                url = handleProductSearching(request, response);
+                System.out.println("hong co gi het do ngok" + url);
             }
         } catch (Exception e) {
             e.printStackTrace();

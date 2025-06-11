@@ -17,10 +17,10 @@ import utils.DbUtils;
  */
 public class ProductDAO {
      // SQL Queries
-    private static final String GET_ALL_PRODUCTS = "SELECT id, name, description, price, size, status FROM tblProducts";
-    private static final String GET_PRODUCT_BY_ID = "SELECT id, name, description, price, size, status FROM tblProducts WHERE id = ?";
+    private static final String GET_ALL_PRODUCTS = "SELECT id, name, image, description, price, size, status FROM tblProducts";
+    private static final String GET_PRODUCT_BY_ID = "SELECT id, name, image, description, price, size, status FROM tblProducts WHERE id = ?";
     private static final String CREATE_PRODUCT = "INSERT INTO tblProducts (id, name, image, description, price, size, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT = "UPDATE tblProducts SET name = ?, description = ?, price = ?, size = ?, status = ? WHERE id = ?";
+    private static final String UPDATE_PRODUCT = "UPDATE tblProducts SET name = ?, image = ?, description = ?, price = ?, size = ?, status = ? WHERE id = ?";
     private static final String DELETE_PRODUCT = "DELETE FROM tblProducts WHERE id = ?";
 
     public List<ProductDTO> getAll() {
@@ -277,7 +277,7 @@ public class ProductDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         
-        String query = GET_ALL_PRODUCTS + " WHERE name like ?";
+        String query = GET_ALL_PRODUCTS + " WHERE name LIKE ?";
         
         try {
             conn = DbUtils.getConnection();
@@ -288,12 +288,12 @@ public class ProductDAO {
             while (rs.next()) {
                ProductDTO product = new ProductDTO();
                product.setId(rs.getString("id"));
-               product.setId(rs.getString("name"));
-               product.setId(rs.getString("image"));
-               product.setId(rs.getString("description"));
-               product.setId(rs.getString("price"));
-               product.setId(rs.getString("size"));
-               product.setId(rs.getString("status"));
+               product.setName(rs.getString("name"));
+               product.setImage(rs.getString("image"));
+               product.setDescription(rs.getString("description"));
+               product.setPrice(rs.getDouble("price"));
+               product.setSize(rs.getString("size"));
+               product.setStatus(rs.getBoolean("status"));
                
                products.add(product);
             }

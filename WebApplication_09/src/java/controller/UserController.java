@@ -120,7 +120,7 @@ public class UserController extends HttpServlet {
                 session.invalidate();
             }
         }
-        return LOGIN_PAGE;
+        return "login.jsp";
     }
 
     private String handleRegister(HttpServletRequest request, HttpServletResponse response) {

@@ -18,25 +18,30 @@
         <%
     if(AuthUtils.isLoggedIn(request)){
         UserDTO user = AuthUtils.getCurrentUser(request);
+        String keyword = (String)request.getAttribute("keyword");
         %>
         <h1>Hello && Welcome <%= user.getFullName() %> to WELCOME PAGE!</h1>
         <hr/>
-        <form action="MainController" method="post">
+        <!--<a href="MainController?action=logout">Logout </a> chơi trực tiếp với Controller-->
+        <form action="MainController" method="get">
             <input type="hidden" name="action" value="searchProduct"/>
             Search product by name:
             <input type="text" name="keyword" value="<%=keyword != null ? keyword : ""%>" /> 
             <input type="submit" value="search" />
+        </form>
+        <form action="MainController" method="get">
             <input type="hidden" name="action" value="logout"/>
-            <!--            <a href="MainController?action=logout">Logout </a> chơi trực tiếp với Controller-->
+
             <input type="submit" value="Logout"/>
         </form>
+
         <br/>
-        <%List<ProductDTO> list = (ProductDTO)request.getAttribute("list");
-            if(list == null || list == ""){
+        <%List<ProductDTO> list = (List<ProductDTO>)request.getAttribute("list");
+            if(list != null && list.isEmpty()){
         %>
         Not things match with your keyword.
         <%
-    }else if(list != null && list != list.isEmpty())
+            }else if(list != null && !list.isEmpty()){
         %>
         <table>
             <thead>
@@ -49,6 +54,7 @@
             <th>Status</th>
         </thead>
         <tbody>
+
             <%for(ProductDTO pro : list){
             %>
             <tr>
@@ -58,14 +64,16 @@
                 <td><%=pro.getDescription()%></td>
                 <td><%=pro.getPrice()%></td>
                 <td><%=pro.getSize()%></td>
-                <!--if(pro.istatus()) is false hidden in the list search products-->
-                <td><%=pro.isStatus()%></td>
+                <td><%=pro.isStatus() ? "Active" : "Inactive"%></td>
             </tr>
             <%
             }
             %>
-        </tbody>
+        </tbody>                <!--if(pro.istatus()) is false hidden in the list search products-->
     </table>
+    <%
+        }
+    %>
     <!--nang cap phan hien thi san pham khi bi inactive-->
     <% } else { %>
     <%=AuthUtils.getAccessDeniedMessage("welcome.jsp")%> <br/>

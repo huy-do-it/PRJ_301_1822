@@ -55,3 +55,7 @@ INSERT [dbo].[tblProducts] ([id], [name], [description], [price], [size], [statu
 INSERT [dbo].[tblProducts] ([id], [name], [description], [price], [size], [status]) VALUES (N'F-008', N'Men''s blazer', N'Men''s suit jacket', 753,'L', 0)
 INSERT [dbo].[tblProducts] ([id], [name], [description], [price], [size], [status]) VALUES (N'F-009', N'Ladies'' t-shirt', N'Ladies'' activewear t-shirt', 270,'S', 1)
 GO
+
+-- image : TEXT
+ALTER TABLE tblProducts
+ADD image TEXT;
