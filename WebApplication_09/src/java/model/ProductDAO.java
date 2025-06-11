@@ -294,8 +294,8 @@ public class ProductDAO {
                product.setPrice(rs.getDouble("price"));
                product.setSize(rs.getString("size"));
                product.setStatus(rs.getBoolean("status"));
-               
-               products.add(product);
+                if(product.isStatus()) //to display to screen if satus false(Inactive) --> ko add
+                    products.add(product);
             }
         } catch (Exception e) {
             System.err.println("Error in getProductsByStatus(): " + e.getMessage());
