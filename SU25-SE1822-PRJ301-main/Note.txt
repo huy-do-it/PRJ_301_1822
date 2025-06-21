@@ -1,0 +1,72 @@
+A. Thông tin liên hệ:
++ ThS. Lê Nhật Tùng
++ Email: lenhattung@gmail.com
++ www.titv.vn
++ https://www.youtube.com/@TITVvn
+
+B. Nền tang làm việc/ Tài liệu
++ https://github.com/lenhattung/SU25-SE1822-PRJ301
++ https://lms-hcm.fpt.edu.vn/login/index.php
+Key: Z+::5oeIfPGzkgW0A1TD
++ https://fu-edunext.fpt.edu.vn/
++ https://flm.fpt.edu.vn/DefaultSignin
+
+C. Tools
+1.	Về tool lập trình: IDE tool là Netbeans 13
+2.	JDK: 8 Update 172
+3.	Web Server: Tomcat 10.0.27
+4.	DB Server: MS SQL Server 2019, sử dụng, thư viện kết nối DB: sqljdbc4.jar
+5.	Trình duyệt: Các browsers (chỉ sử dụng duy nhất một trình duyệt tại thời điểm thi PE)
+6.	Việc thi PE chỉ được mở các tool trên (1 -> 5) cùng Windows Explorer, WinZip để nén. Tất cả các công cụ khác ngoài các công cụ nêu trên (cho dù mở vô tình hay mở không sử dụng) sẽ coi như là vi phạm qui chế thi và sẽ bị 0 điểm PE
+
+D. Quy định điểm danh
++ Điểm danh vào đầu buổi học (sau 5 phút bắt đầu).
++ Vắng tối đa 4 slots. 
+
+
+E. Đánh giá
+1. Assignment	on-going	1	30.0%:
++ Project, xây dựng một website hoàn chỉnh.
++ Chủ đề: tự chọn.
++ Theo quy chuẩn chấm điểm, đánh giá chung cho toàn lớp.
++ Làm nhóm 3 người.
++ Github/ tương tác.
++ Đánh giá 2 slot cuối.
+
+2. Progress Test 	on-going	2x1	2x5.0% = 10%
++ Chuyên cần: 50%.
++ Quiz => 50%.
+=> Vắng 1 slot -1.5đ.
+
+3. Workshop 	on-going	2x1	2x5.0% (project mini)
++ Lập trình mini website theo yêu cầu đề.
++ Nộp sản phẩm trên LMS.
++ Trình bày vấn đáp.
+
+4. Practical Exam	on-going	1	30.0%
+
+5. Final Exam	final exam	1	20.0%
+
+6. Cộng điểm:
++ Tham gia thảo luận trên edunext:
+Tối thiểu 15/20 slot (tương ứng 45 câu hỏi).
+=> Cộng mỗi bài workshop 1 điểm.
+
++ Web Applications for Everybody Specialization - Cousera certificate 
+– Địa chỉ: https://www.coursera.org/specializations/web-applications
+- Hoàn thành và lấy được chứng chỉ: +1.5 => Assignment.
+
+F. Zoom
+https://uw-edu-pl.zoom.us/j/92730934743
+
+G. Videos
+- Slot 1: https://youtu.be/PgFVKhSf6o4
+- Slot 2: https://youtu.be/lnT4wIUnPnI
+- Slot 3: https://youtu.be/DqgtQ_CP64c
+- Slot 4: https://youtu.be/Zw7RhQ4nUFM
+- Slot 5: https://youtu.be/VoJuYtnYljE / https://youtu.be/ydgrY6YVWmQ 
+- Slot 6: https://youtu.be/KyQRkoh1cR8
+- Slot 7: https://youtu.be/S55Yu1rVDCg
+- Slot 8: https://youtu.be/Hf-mcIhDxro
+- Slot 9: https://youtu.be/PiUNQoXK5Kg
+- Slot 10: https://youtu.be/P5_X5NUT4n0
