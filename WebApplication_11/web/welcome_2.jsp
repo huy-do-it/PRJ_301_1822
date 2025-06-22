@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Product Management System</title>
+        <title>Product Management</title>
         <style>
             /* General Styles */
             body {
@@ -46,28 +46,6 @@
                 border-bottom: 2px solid #eee;
             }
 
-            .header-actions {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            .add-product-btn {
-                background-color: #28a745;
-                color: white;
-                padding: 8px 16px;
-                text-decoration: none;
-                border-radius: 4px;
-                font-size: 14px;
-                transition: background-color 0.3s;
-                border: none;
-                cursor: pointer;
-            }
-
-            .add-product-btn:hover {
-                background-color: #218838;
-            }
-
             .logout-btn {
                 background-color: #d32f2f;
                 color: white;
@@ -80,6 +58,22 @@
 
             .logout-btn:hover {
                 background-color: #b71c1c;
+            }
+
+            /* Add Product Button */
+            .add-product-btn {
+                background-color: #28a745;
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                border-radius: 4px;
+                font-size: 14px;
+                transition: background-color 0.3s;
+                margin-left: 10px;
+            }
+
+            .add-product-btn:hover {
+                background-color: #218838;
             }
 
             /* Search Form Styles */
@@ -146,31 +140,6 @@
                 margin: 20px 0;
             }
 
-            /* Access Denied Styles */
-            .access-denied {
-                text-align: center;
-                padding: 40px;
-                background-color: #f8d7da;
-                border: 1px solid #f5c6cb;
-                border-radius: 4px;
-                color: #721c24;
-            }
-
-            .login-link {
-                display: inline-block;
-                margin-top: 15px;
-                padding: 10px 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-                transition: background-color 0.3s;
-            }
-
-            .login-link:hover {
-                background-color: #0056b3;
-            }
-
             /* Table Styles */
             .table-container {
                 margin-top: 25px;
@@ -218,12 +187,12 @@
             }
 
             /* Status styling */
-            .status-active {
+            .status-true {
                 color: #28a745;
                 font-weight: bold;
             }
 
-            .status-inactive {
+            .status-false {
                 color: #dc3545;
                 font-weight: bold;
             }
@@ -234,36 +203,38 @@
                 color: #007bff;
             }
 
-            /* Action buttons */
+            /* Action buttons styling */
             .action-buttons {
                 display: flex;
                 gap: 5px;
-                flex-wrap: wrap;
+                align-items: center;
             }
 
             .edit-btn {
                 background-color: #ffc107;
                 color: #212529;
-                padding: 4px 8px;
+                padding: 6px 12px;
                 border: none;
-                border-radius: 3px;
+                border-radius: 4px;
                 cursor: pointer;
                 font-size: 12px;
+                transition: background-color 0.3s;
                 text-decoration: none;
                 display: inline-block;
-                transition: background-color 0.3s;
             }
 
             .edit-btn:hover {
                 background-color: #e0a800;
+                color: #212529;
+                text-decoration: none;
             }
 
             .delete-btn {
                 background-color: #dc3545;
                 color: white;
-                padding: 4px 8px;
+                padding: 6px 12px;
                 border: none;
-                border-radius: 3px;
+                border-radius: 4px;
                 cursor: pointer;
                 font-size: 12px;
                 transition: background-color 0.3s;
@@ -271,6 +242,11 @@
 
             .delete-btn:hover {
                 background-color: #c82333;
+            }
+
+            .delete-form {
+                display: inline-block;
+                margin: 0;
             }
 
             /* Responsive Design */
@@ -305,6 +281,12 @@
 
                 .action-buttons {
                     flex-direction: column;
+                    gap: 3px;
+                }
+
+                .edit-btn, .delete-btn {
+                    width: 100%;
+                    text-align: center;
                 }
             }
         </style>
@@ -312,91 +294,82 @@
     <body>
         <!-- Kiểm tra đăng nhập -->
         <c:choose>
-            <c:when test="${not empty sessionScope.user}">
+            <c:when test="${ empty sessionScope.user}">
+                <c:redirect url="MainController"/>
+            </c:when>
+            <c:otherwise>
                 <div class="container">
                     <div class="header-section">
-                        <h1>Hello and welcome ${sessionScope.user.fullName}!</h1>
-                        <div class="header-actions">
+                        <h1>Welcome ${sessionScope.user.fullName}!</h1>
+                        <div>
                             <a href="MainController?action=logout" class="logout-btn">Logout</a>
                         </div>
                     </div>
 
-                    <div class="content">
-                        <div class="search-section">
-                            <form action="MainController" method="post" class="search-form">
-                                <input type="hidden" name="action" value="searchProduct"/>
-                                <label class="search-label">Search product by name:</label>
-                                <input type="text" name="keyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" 
-                                       class="search-input" placeholder="Enter product name..."/>
-                                <input type="submit" value="Search" class="search-btn"/>
-                            </form>
-                        </div>
+                    <div class="search-section">
+                        <label class="search-label">Search by name:</label>
+                        <form action="ProductController" method="post" class="search-form">
+                            <input type="hidden" name="action" value="searchProduct"/>
+                            <input type="text" name="strKeyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" 
+                                   class="search-input" placeholder="Enter product name..."/>
+                            <input type="submit" value="Search" class="search-btn"/>
+                        </form>
+                    </div>
 
-                        <!-- Hiển thị nút Add Product nếu là admin -->
-                        <c:if test="${sessionScope.user.roleID eq 'AD'}">
-                            <a href="productForm.jsp" class="add-product-btn">Add Product</a>
-                        </c:if>
+                    <!-- Hiển thị nút Add Product nếu là admin -->
+                    <c:if test="${sessionScope.user.roleID eq 'AD'}">
+                        <a href="productForm.jsp" class="add-product-btn">Add New Product</a>
+                    </c:if>
 
-                        <!-- Xử lý danh sách sản phẩm -->
-                        <c:choose>
-                            <c:when test="${not empty requestScope.list and fn:length(requestScope.list) == 0}">
-                                <div class="no-results">
-                                    No products have names that match the keyword!
-                                </div>
-                            </c:when>
-                            <c:when test="${not empty requestScope.list and fn:length(requestScope.list) > 0}">
-                                <table class="products-table">
+                    <!-- Xử lý danh sách sản phẩm -->
+                    <c:choose>
+                        <c:when test="${not empty requestScope.list and fn:length(requestScope.list) == 0}">
+                            <div class="no-results">
+                                No products have names that match the keyword!
+                            </div>
+                        </c:when>
+                        <c:when test="${not empty requestScope.list and fn:length(requestScope.list) > 0}">
+                            <div class="table-container">
+                                <table>
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>Name</th>
-                                            <th>Image</th>
                                             <th>Description</th>
                                             <th>Price</th>
                                             <th>Size</th>
                                             <th>Status</th>
-                                                <c:if test="${sessionScope.user.roleID eq 'AD'}">
+                                            <c:if test="${sessionScope.user.roleID == 'AD'}">
                                                 <th>Action</th>
-                                                </c:if>
+                                            </c:if>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <c:forEach var="product" items="${requestScope.list}">
                                             <tr>
-                                                <td data-label="ID" class="product-id">${product.id}</td>
-                                                <td data-label="Name" class="product-name">${product.name}</td>
-                                                <td data-label="Image">
-                                                    <c:choose>
-                                                        <c:when test="${not empty product.image}">
-                                                            <img src="${product.image}" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;">
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            ${product.image}
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                <td>${product.id}</td>
+                                                <td>${product.name}</td>
+                                                <td>${product.description}</td>
+                                                <td class="price">$${product.price}</td>
+                                                <td>${product.size}</td>
+                                                <td class="${product.status ? 'status-true' : 'status-false'}">
+                                                    ${product.status ? 'Active' : 'Inactive'}
                                                 </td>
-                                                <td data-label="Description">${product.description}</td>
-                                                <td data-label="Price" class="product-price price">$${product.price}</td>
-                                                <td data-label="Size">${product.size}</td>
-                                                <td data-label="Status">
-                                                    <span class="product-status ${product.status ? 'status-active' : 'status-inactive'}">
-                                                        ${product.status ? 'Active' : 'Inactive'}
-                                                    </span>
-                                                </td>
-                                                <c:if test="${sessionScope.user.roleID eq 'AD'}">
-                                                    <td data-label="Action">
+                                                <c:if test="${sessionScope.user.roleID == 'AD'}">
+                                                    <td>
                                                         <div class="action-buttons">
-                                                            <form action="MainController" method="get" style="display: inline;">
+                                                            <form action="MainController" method="post">
                                                                 <input type="hidden" name="action" value="editProduct"/>
                                                                 <input type="hidden" name="productId" value="${product.id}"/>
-                                                                <input type="hidden" name="keyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" />
+                                                                <input type="hidden" name="strKeyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" />
                                                                 <input type="submit" value="Edit" class="edit-btn" />
                                                             </form>
-                                                            <form action="MainController" method="get" style="display: inline;">
+                                                                
+                                                            <form action="MainController" method="post" class="delete-form">
                                                                 <input type="hidden" name="action" value="changeProductStatus"/>
                                                                 <input type="hidden" name="productId" value="${product.id}"/>
-                                                                <input type="hidden" name="keyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" />
-                                                                <input type="submit" value="Delete" class="delete-btn" 
+                                                                <input type="hidden" name="strKeyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" />
+                                                                <input type="submit" value="Delete" class="delete-btn"
                                                                        onclick="return confirm('Are you sure you want to delete this product?')"/>
                                                             </form>
                                                         </div>
@@ -404,26 +377,11 @@
                                                 </c:if>
                                             </tr>
                                         </c:forEach>
-                                    </tbody>
+                                    </tbody>    
                                 </table>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="no-results">
-                                    <h3>No products available</h3>
-                                    <p>There are no products in the system yet.</p>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="container">
-                    <div class="access-denied">
-                        <h2>Access Denied</h2>
-                        <p>You need to login to access this page.</p>
-                        <a href="MainController?action=login" class="login-link">Login Now</a>
-                    </div>
+                            </div>
+                        </c:when>
+                    </c:choose>
                 </div>
             </c:otherwise>
         </c:choose>

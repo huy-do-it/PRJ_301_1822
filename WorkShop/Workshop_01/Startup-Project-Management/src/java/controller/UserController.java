@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
+import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,53 +8,37 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.UserDAO;
-import model.UserDTO;
 
 /**
  *
  * @author ddhuy
  */
-@WebServlet(name = "MainController", urlPatterns = {"", "/", "/MainController"})
-public class MainController extends HttpServlet {
-
-    private static String WELCOME = "login.jsp";
-
-    private boolean isUserAction(String action) {
-        return "login".equals(action)
-                || "logout".equals(action)
-                || "register".equals(action)
-                || "updateProfile".equals(action)
-                || "viewProfile".equals(action)
-                || "changePassword".equals(action);
-    }
-
-    private boolean isProductAction(String action) {
-        return "addProduct".equals(action)
-                || "searchProduct".equals(action)
-                || "changeProductStatus".equals(action)
-                || "editProduct".equals(action)
-                || "updateProduct".equals(action);
-    }
-
+@WebServlet(name = "UserController", urlPatterns = {"/UserController"})
+public class UserController extends HttpServlet {
+    private static final String LOGIN_PAGE = "login.jsp";
+    private static final String WELCOME_PAGE = "welcome.jsp";
+    /**
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = WELCOME;
-
+        String action = request.getParameter("action");
+        String url = LOGIN_PAGE; // first time deploy the web = default
         try {
-            String action = request.getParameter("action");
-            if (isUserAction(action)) {
-                url = "/UserController";
-            } else if (isProductAction(action)) {
-                url = "/ProductController";
+            if(action.equals("login")){
+                url = handleLogin(request,response);
+            }else if(action.equals("logout")){
+                
             }
-
         } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -98,5 +79,14 @@ public class MainController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
+        String url = LOGIN_PAGE;
+        UserDAO uDAO = new UserDAO();
+        request.getParameter("userName");
+        request.getParameter("password");
+        
+        return "welcome.jsp";
+    }
 
 }

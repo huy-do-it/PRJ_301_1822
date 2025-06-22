@@ -11,53 +11,46 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.UserDAO;
-import model.UserDTO;
 
 /**
  *
  * @author ddhuy
  */
-@WebServlet(name = "MainController", urlPatterns = {"", "/", "/MainController"})
+@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
-
-    private static String WELCOME = "login.jsp";
-
+    
+    private static final String DEFAULT_PAGE = "login.jsp";
+    
     private boolean isUserAction(String action) {
-        return "login".equals(action)
-                || "logout".equals(action)
-                || "register".equals(action)
-                || "updateProfile".equals(action)
-                || "viewProfile".equals(action)
-                || "changePassword".equals(action);
+        return "login".equals(action);
     }
 
-    private boolean isProductAction(String action) {
-        return "addProduct".equals(action)
-                || "searchProduct".equals(action)
-                || "changeProductStatus".equals(action)
-                || "editProduct".equals(action)
-                || "updateProduct".equals(action);
+    private boolean isProjectAction(String action) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
+    /**
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = WELCOME;
-
+        String url = DEFAULT_PAGE; // first time deploy to the web = default
         try {
             String action = request.getParameter("action");
-            if (isUserAction(action)) {
+            if(isUserAction(action)){
                 url = "/UserController";
-            } else if (isProductAction(action)) {
-                url = "/ProductController";
+            }else if(isProjectAction(action)){
+                url = "/ProjectController";
             }
-
         } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -98,5 +91,7 @@ public class MainController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    
 
 }

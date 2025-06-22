@@ -11,53 +11,38 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.UserDAO;
-import model.UserDTO;
 
 /**
  *
  * @author ddhuy
  */
-@WebServlet(name = "MainController", urlPatterns = {"", "/", "/MainController"})
-public class MainController extends HttpServlet {
+@WebServlet(name = "ProjectController", urlPatterns = {"/ProjectController"})
+public class ProjectController extends HttpServlet {
 
-    private static String WELCOME = "login.jsp";
-
-    private boolean isUserAction(String action) {
-        return "login".equals(action)
-                || "logout".equals(action)
-                || "register".equals(action)
-                || "updateProfile".equals(action)
-                || "viewProfile".equals(action)
-                || "changePassword".equals(action);
-    }
-
-    private boolean isProductAction(String action) {
-        return "addProduct".equals(action)
-                || "searchProduct".equals(action)
-                || "changeProductStatus".equals(action)
-                || "editProduct".equals(action)
-                || "updateProduct".equals(action);
-    }
-
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = WELCOME;
-
-        try {
-            String action = request.getParameter("action");
-            if (isUserAction(action)) {
-                url = "/UserController";
-            } else if (isProductAction(action)) {
-                url = "/ProductController";
-            }
-
-        } catch (Exception e) {
-        } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+        try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ProjectController</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ProjectController at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

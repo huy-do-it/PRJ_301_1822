@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import model.ProductDAO;
 import model.ProductDTO;
-import utils.AuthUtils;
+import util.AuthUtils;
 
 /**
  *
