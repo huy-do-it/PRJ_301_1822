@@ -1,13 +1,12 @@
-DROP TABLE tblStartupProjects;
--- T?o database
-CREATE DATABASE Workshop_1
+
+CREATE DATABASE Workshop_01
 GO
 
--- S? d?ng database v?a t?o
-USE Workshop_1
+
+USE Workshop_01
 GO
 
--- T?o b?ng tblUsers
+
 CREATE TABLE tblUsers (
     Username VARCHAR(50) PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
@@ -15,7 +14,7 @@ CREATE TABLE tblUsers (
     Role VARCHAR(20) NOT NULL CHECK (Role IN ('Founder', 'Team Member'))
 );
 
--- T?o b?ng tblStartupProjects
+
 CREATE TABLE tblStartupProjects (
     project_id INT PRIMARY KEY,
     project_name VARCHAR(100) NOT NULL,
@@ -24,23 +23,22 @@ CREATE TABLE tblStartupProjects (
     estimated_launch DATE NOT NULL
 );
 
--- Chèn d? li?u m?u vào tblUsers
+
 INSERT INTO tblUsers (Username, Name, Password, Role) VALUES
-('ngoc_quang', 'Ngoc Quang', 'ngocquang123', 'Founder'),
-('tuong_vi', 'Tuong Vi', 'tuongvi123', 'Team Member');
+('HuyDT', 'Admin Dep Trai', 'deptrai', 'Founder'),
+('AEBonPhuong', 'Anh Em', 'anhem', 'Team Member');
 
 
 
--- Chèn d? li?u m?u vào tblStartupProjects
 INSERT INTO tblStartupProjects (project_id, project_name, Description, Status, estimated_launch) VALUES
-(1, 'Tech Revolution', 'A startup focusing on AI solutions.', 'Ideation', '01-06-2025'),
-(2, 'Green Energy', 'Renewable energy project.', 'Development', '02-07-2024'),
-(3, 'FinTech Pro', 'A next-gen fintech platform.', 'Development', '03-06-2024'),
-(4, 'Health Guardian', 'AI-powered health monitoring system.', 'Scaling', '02-08-2023'),
-(5, 'EduFuture', 'E-learning platform for modern education.', 'Ideation', '01-07-2021'),
-(6, 'SmartAgri', 'IoT-based smart agriculture solution.', 'Scaling', '02-08-2023'),
-(7, 'Urban Mobility', 'Electric scooter sharing network.', 'Launch', '01-09-2022'),
-(8, 'CyberShield', 'Cybersecurity AI-powered tool.', 'Development', '01-06-2022'),
-(9, 'SpaceXplorer', 'Aerospace research and exploration.', 'Scaling', '03-06-2025'),
-(10, 'QuantumCompute', 'Quantum computing research project.', 'Launch', '01-07-2025');
+(1, 'Foodify', 'Online food delivery platform.', 'Ideation', '2025-08-01'),
+(2, 'MediConnect', 'Healthcare appointment scheduling app.', 'Development', '2024-11-15'),
+(3, 'EcoTravel', 'Sustainable travel booking service.', 'Development', '2024-12-10'),
+(4, 'BookNest', 'Digital library and book sharing network.', 'Scaling', '2023-10-20'),
+(5, 'HomeGenie', 'Smart home automation for apartments.', 'Ideation', '2021-09-30'),
+(6, 'PetCare+', 'Pet health tracking and vet booking.', 'Scaling', '2023-08-12'),
+(7, 'TutorMatch', 'Platform connecting tutors with students.', 'Launch', '2022-03-18'),
+(8, 'FitTrack', 'AI-powered fitness and nutrition tracking.', 'Development', '2022-06-25'),
+(9, 'Farm2Table', 'Direct farm-to-consumer food supply.', 'Scaling', '2025-04-05'),
+(10, 'SkillBurst', 'Online micro-learning courses.', 'Launch', '2025-11-01');
 

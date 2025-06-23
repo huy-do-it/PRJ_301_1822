@@ -18,7 +18,6 @@ public class UserDAO {
     public boolean isLogin(String userName, String password) {
         User user = getUserByUserName(userName);
         return (user != null && user.getPassword().equals(password));
-
     }
 
     public User getUserByUserName(String usernName) {

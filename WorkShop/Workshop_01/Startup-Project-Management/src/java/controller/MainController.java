@@ -16,25 +16,28 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author ddhuy
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
+@WebServlet(name = "MainController", urlPatterns = {"", "/", "/MainController"})
 public class MainController extends HttpServlet {
-    
+
     private static final String DEFAULT_PAGE = "login.jsp";
-    
+
     private boolean isUserAction(String action) {
-        return "login".equals(action);
+        return "login".equals(action)
+                || "logout".equals(action);
     }
 
     private boolean isProjectAction(String action) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return "searchProject".equals(action)
+                || "updateProject".equals(action)
+                || "addProject".equals(action);
     }
-    
+
     /**
-     * 
+     *
      * @param request
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,9 +45,9 @@ public class MainController extends HttpServlet {
         String url = DEFAULT_PAGE; // first time deploy to the web = default
         try {
             String action = request.getParameter("action");
-            if(isUserAction(action)){
+            if (isUserAction(action)) {
                 url = "/UserController";
-            }else if(isProjectAction(action)){
+            } else if (isProjectAction(action)) {
                 url = "/ProjectController";
             }
         } catch (Exception e) {
@@ -91,7 +94,5 @@ public class MainController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    
 
 }

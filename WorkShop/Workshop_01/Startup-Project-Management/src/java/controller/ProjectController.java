@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.StartupProjectDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.StartupProject;
 
 /**
  *
@@ -18,30 +21,28 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ProjectController", urlPatterns = {"/ProjectController"})
 public class ProjectController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
+    
+    
+    StartupProjectDAO spdao = new StartupProjectDAO();
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProjectController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProjectController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String url = "";
+        try {
+            String action = request.getParameter("action");
+            if ("searchProject".equals(action)) {
+                url = handleProjectSearching(request, response);
+            } else if("addProject".equals(action)){
+                url = handleProjectCreating(request, response);
+            }else if("updateProject".equals(action)){
+                url = handleProjectUpdating(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 
@@ -83,5 +84,25 @@ public class ProjectController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String handleProjectSearching(HttpServletRequest request, HttpServletResponse response) {
+        String keyword = request.getParameter("keyword");
+        List<StartupProject> project = spdao.getProjectByName(keyword);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("project", project);
+        
+        return "welcome.jsp";
+    }
+
+    private String handleProjectCreating(HttpServletRequest request, HttpServletResponse response) {
+                    // remember create a method check error for update & create status
+        
+        return "actionProject.jsp";
+    }
+
+    private String handleProjectUpdating(HttpServletRequest request, HttpServletResponse response) {
+        
+        return "actionProject.jsp";
+    }
 
 }

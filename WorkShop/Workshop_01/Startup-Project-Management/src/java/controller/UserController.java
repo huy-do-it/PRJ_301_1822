@@ -8,6 +8,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
+import model.User;
 
 /**
  *
@@ -33,7 +36,7 @@ public class UserController extends HttpServlet {
             if(action.equals("login")){
                 url = handleLogin(request,response);
             }else if(action.equals("logout")){
-                
+                url = handleLogout(request,response);
             }
         } catch (Exception e) {
         } finally {
@@ -82,11 +85,30 @@ public class UserController extends HttpServlet {
 
     private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
         String url = LOGIN_PAGE;
+        HttpSession session = request.getSession();
         UserDAO uDAO = new UserDAO();
-        request.getParameter("userName");
-        request.getParameter("password");
-        
-        return "welcome.jsp";
+        String userName = request.getParameter("userName");
+        String password = request.getParameter("password");
+        if(uDAO.isLogin(userName, password)){
+            url = WELCOME_PAGE ;
+            User user = uDAO.getUserByUserName(userName);
+            session.setAttribute("user", user);
+        }else{
+            url = LOGIN_PAGE;
+            request.setAttribute("message", "Incorrect Username or Password!");
+        }
+        return url;
+    }
+
+    private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        if(session!=null){
+            User user = (User) session.getAttribute("user");
+            if(user!=null){
+                session.invalidate();
+            }
+        }
+        return LOGIN_PAGE;
     }
 
 }
