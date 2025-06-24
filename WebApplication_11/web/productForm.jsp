@@ -2,11 +2,12 @@
     Document   : productForm
     Created on : Jun 10, 2025, 9:42:29 AM
     Author     : ddhuy
+    Converted to JSTL/EL
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="model.UserDTO" %>
-<%@page import="model.ProductDTO" %>
-<%@page import="utils.AuthUtils" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -194,6 +195,20 @@
                 font-weight: bold;
             }
 
+            .back-link {
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+                margin-bottom: 10px;
+                display: inline-block;
+                opacity: 0.9;
+                transition: opacity 0.3s ease;
+            }
+
+            .back-link:hover {
+                opacity: 1;
+            }
+
             /* Responsive Design */
             @media (max-width: 768px) {
                 .container {
@@ -242,95 +257,102 @@
     </head>
     <body>
         <div class="container">
-            <% if (AuthUtils.isAdmin(request)){
-            
-            String checkError = (String)request.getAttribute("checkError");
-            String message = (String)request.getAttribute("message");
-            ProductDTO product  = (ProductDTO)request.getAttribute("product");
-            Boolean isEdit = (Boolean)request.getAttribute("isEdit")!=null;
-            String keyword = (String)request.getAttribute("keyword");
-            %>
+            <!-- Sử dụng JSTL c:if để kiểm tra quyền admin -->
+            <c:if test="${sessionScope.userDTO != null && sessionScope.userDTO.role == 'ADMIN'}">
+                <!-- Sử dụng EL để lấy giá trị từ request attributes -->
+                <c:set var="checkError" value="${requestScope.checkError}" />
+                <c:set var="message" value="${requestScope.message}" />
+                <c:set var="product" value="${requestScope.product}" />
+                <c:set var="isEdit" value="${requestScope.isEdit != null}" />
+                <c:set var="keyword" value="${requestScope.keyword}" />
 
-            <div class="header">
-                <a href="welcome.jsp" class="back-link">← Back to Products</a>
-                <h1><%=isEdit ? "EDIT PRODUCT" : "ADD PRODUCT"%></h1>
-            </div>
+                <div class="header">
+                    <a href="welcome.jsp" class="back-link">← Back to Products</a>
+                    <h1>
+                        <!-- Sử dụng JSTL c:choose để hiển thị tiêu đề động -->
+                        <c:choose>
+                            <c:when test="${isEdit}">EDIT PRODUCT</c:when>
+                            <c:otherwise>ADD PRODUCT</c:otherwise>
+                        </c:choose>
+                    </h1>
+                </div>
 
-            <div class="form-container">
-                <form action="MainController" method="post">
-                    <input type="hidden" name="action" value="<%=isEdit ? "updateProduct" : "addProduct"%>"/>
+                <div class="form-container">
+                    <form action="MainController" method="post">
+                        <!-- Sử dụng EL với conditional operator -->
+                        <input type="hidden" name="action" value="${isEdit ? 'updateProduct' : 'addProduct'}"/>
 
-                    <div class="form-group"> 
-                        <label for="id">ID <span class="required">*</span></label> 
-                        <input type="text" id="id" name="id" required="required"
-                               value="<%=product!=null?product.getId():""%>" 
-                               <%=isEdit ? "readonly" : ""%> 
-                               />
-                    </div>
+                        <div class="form-group"> 
+                            <label for="id">ID <span class="required">*</span></label> 
+                            <input type="text" id="id" name="id" required="required"
+                                   value="${product != null ? product.id : ''}" 
+                                   ${isEdit ? 'readonly' : ''} />
+                        </div>
 
-                    <div class="form-group"> 
-                        <label for="name">Name <span class="required">*</span></label> 
-                        <input type="text" id="name" name="name" required="required"
-                               value="<%=product!=null?product.getName():""%>"/>
-                    </div>
+                        <div class="form-group"> 
+                            <label for="name">Name <span class="required">*</span></label> 
+                            <input type="text" id="name" name="name" required="required"
+                                   value="${product != null ? product.name : ''}"/>
+                        </div>
 
-                    <div class="form-group"> 
-                        <label for="image">Image URL</label> 
-                        <input type="text" id="image" name="image"
-                               value="<%=product!=null?product.getImage():""%>"/>
-                    </div>
+                        <div class="form-group"> 
+                            <label for="image">Image URL</label> 
+                            <input type="text" id="image" name="image"
+                                   value="${product != null ? product.image : ''}"/>
+                        </div>
 
-                    <div class="form-group"> 
-                        <label for="description">Description</label> 
-                        <textarea id="description" name="description" 
-                                  placeholder="Enter product description..."><%=product!=null?product.getDescription():""%></textarea>
-                    </div>
+                        <div class="form-group"> 
+                            <label for="description">Description</label> 
+                            <textarea id="description" name="description" 
+                                      placeholder="Enter product description...">${product != null ? product.description : ''}</textarea>
+                        </div>
 
-                    <div class="form-group"> 
-                        <label for="price">Price <span class="required">*</span></label> 
-                        <input type="number" id="price" name="price" required="required" 
-                               min="0" step="0.01" placeholder="0.00"
-                               value="<%=product!=null?product.getPrice():""%>"/>
-                    </div>
+                        <div class="form-group"> 
+                            <label for="price">Price <span class="required">*</span></label> 
+                            <input type="number" id="price" name="price" required="required" 
+                                   min="0" step="0.01" placeholder="0.00"
+                                   value="<c:if test='${product != null && product.price != null}'><fmt:formatNumber value='${product.price}' type='number' maxFractionDigits='2' minFractionDigits='0' groupingUsed='false' /></c:if>"/>
+                        </div>
 
-                    <div class="form-group"> 
-                        <label for="size">Size</label> 
-                        <input type="text" id="size" name="size" placeholder="e.g., S, M, L, XL"
-                               value="<%=product!=null?product.getSize():""%>"/>
-                    </div>
+                        <div class="form-group"> 
+                            <label for="size">Size</label> 
+                            <input type="text" id="size" name="size" placeholder="e.g., S, M, L, XL"
+                                   value="${product != null ? product.size : ''}"/>
+                        </div>
 
-                    <div class="checkbox-group"> 
-                        <input type="checkbox" id="status" name="status" value="true"
-                               <%=product!=null&&product.isStatus()?" checked='checked' ":""%> />
-                        <label for="status">Active Product</label> 
-                    </div>
+                        <div class="checkbox-group"> 
+                            <input type="checkbox" id="status" name="status" value="true"
+                                   ${product != null && product.status ? 'checked="checked"' : ''} />
+                            <label for="status">Active Product</label> 
+                        </div>
 
-                    <div class="button-group"> 
-                        <input type="hidden" name="keyword" value="<%=keyword!=null?keyword:""%>" />
-                        <input type="submit" value="<%=isEdit ? "Update Product" : "Add Product"%>"/>
-                        <input type="reset" value="Reset"/>    
-                    </div>
-                </form>
+                        <div class="button-group"> 
+                            <input type="hidden" name="keyword" value="${keyword != null ? keyword : ''}" />
+                            <input type="submit" value="${isEdit ? 'Update Product' : 'Add Product'}"/>
+                            <input type="reset" value="Reset"/>    
+                        </div>
+                    </form>
 
-                <% if(checkError != null && !checkError.isEmpty()) { %>
-                <div class="error-message"><%=checkError%></div>
-                <% } else if(message != null&& !message.isEmpty()) { %>
-                <div class="success-message"><%=message%></div>
-                <% } %>
-            </div>
+                    <!-- Sử dụng JSTL c:if để hiển thị thông báo lỗi/thành công -->
+                    <c:if test="${not empty checkError}">
+                        <div class="error-message">${checkError}</div>
+                    </c:if>
+                    
+                    <c:if test="${empty checkError and not empty message}">
+                        <div class="success-message">${message}</div>
+                    </c:if>
+                </div>
+            </c:if>
 
-            <%
-        }else {
-            %>
-            <div class="header">
-                <h1>ACCESS DENIED</h1>
-            </div>
-            <div class="access-denied">
-                <%=AuthUtils.getAccessDeniedMessage("Product Form")%> 
-            </div>
-            <%
-        }
-            %>
+            <!-- Hiển thị thông báo Access Denied -->
+            <c:if test="${sessionScope.userDTO == null || sessionScope.userDTO.role != 'ADMIN'}">
+                <div class="header">
+                    <h1>ACCESS DENIED</h1>
+                </div>
+                <div class="access-denied">
+                    You do not have permission to access the Product Form. Please contact your administrator.
+                </div>
+            </c:if>
         </div>
     </body>
 </html>

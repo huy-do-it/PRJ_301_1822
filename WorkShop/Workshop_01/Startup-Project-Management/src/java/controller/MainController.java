@@ -29,7 +29,7 @@ public class MainController extends HttpServlet {
     private boolean isProjectAction(String action) {
         return "searchProject".equals(action)
                 || "updateProject".equals(action)
-                || "addProject".equals(action);
+                || "createProject".equals(action);
     }
 
     /**

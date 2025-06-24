@@ -28,6 +28,7 @@
                            class="search-input" placeholder="Seach project by name..."/>
                     <input type="submit" value="Search" class="search-btn"/>
                 </form>
+                           <a href="actionProject.jsp" class="create-btn">Create Project</a>  
                 <table>
                     <thead>
                         <tr>
