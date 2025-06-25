@@ -34,15 +34,11 @@ public class AuthUtils {
     }
     
     public static boolean isAdmin(HttpServletRequest request){
-        return hasRole(request, "AD");
-    }
-    
-    public static boolean isManager(HttpServletRequest request){
-        return hasRole(request, "MA");
+        return hasRole(request, "Founder");
     }
     
     public static boolean isMember(HttpServletRequest request){
-        return hasRole(request, "MB");
+        return hasRole(request, "Team Member");
     }
     
     public static String getAccessDeniedMessage(String action){

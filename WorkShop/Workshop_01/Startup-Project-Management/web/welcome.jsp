@@ -28,7 +28,10 @@
                            class="search-input" placeholder="Seach project by name..."/>
                     <input type="submit" value="Search" class="search-btn"/>
                 </form>
-                           <a href="actionProject.jsp" class="create-btn">Create Project</a>  
+                <c:if test="${sessionScope.user.role eq 'Founder'}">
+                    <a href="actionProject.jsp" class="create-btn">Create Project</a>  
+                </c:if>
+
                 <table>
                     <thead>
                         <tr>
@@ -44,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="p" items="${project}">
+                        <c:forEach var="p" items="${projects}">
                             <tr>
                                 <td>${p.projectId}</td>
                                 <td>${p.projectName}</td>
@@ -65,15 +68,15 @@
                     </tbody>
                 </table>
             </c:when>
-                <c:otherwise>
-                    <div class="container">
-                        <div class="access-denied">
-                            <h2>Access Denied</h2>
-                            <p>You need to login to access this page.</p>
-                            <a href="MainController?action=login" class="login-link">Login Now</a>
-                        </div>
+            <c:otherwise>
+                <div class="container">
+                    <div class="access-denied">
+                        <h2>Access Denied</h2>
+                        <p>You need to login to access this page.</p>
+                        <a href="MainController?action=login" class="login-link">Login Now</a>
                     </div>
-                </c:otherwise>
+                </div>
+            </c:otherwise>
         </c:choose>
     </body>
 </html>

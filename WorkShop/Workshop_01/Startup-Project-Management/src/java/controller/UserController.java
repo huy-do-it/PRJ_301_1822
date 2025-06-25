@@ -19,7 +19,7 @@ import model.User;
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
     private static final String LOGIN_PAGE = "login.jsp";
-    private static final String WELCOME_PAGE = "welcome.jsp";
+    
     /**
      * 
      * @param request
@@ -90,7 +90,7 @@ public class UserController extends HttpServlet {
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         if(uDAO.isLogin(userName, password)){
-            url = WELCOME_PAGE ;
+            url = "MainController?action=searchProject&keyword=" ;
             User user = uDAO.getUserByUserName(userName);
             session.setAttribute("user", user);
         }else{

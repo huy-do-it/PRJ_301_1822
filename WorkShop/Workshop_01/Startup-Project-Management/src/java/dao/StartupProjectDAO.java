@@ -20,7 +20,7 @@ public class StartupProjectDAO {
     private static final String GET_ALL_PROJECT = "SELECT * FROM tblStartupProjects ";
     private static final String UPDATE_PRODUCT = "UPDATE tblStartupProjects SET [project_name] = ?, [Description] = ?, [Status] = ?, [estimated_launch] = ? WHERE project_id = ? ";
     private static final String CREATE_PRODUCT = "INSERT INTO tblStartupProjects (project_id, project_name, Description, Status, estimated_launch) VALUES (?, ?, ?, ?, ?) ";
-
+    private static final String GET_PRODUCT_BY_ID = "SELECT * FROM tblStartupProjects WHERE project_id = ? ";
     public List<StartupProject> getAll() {
 
         List<StartupProject> projects = new ArrayList<>();
@@ -50,7 +50,36 @@ public class StartupProjectDAO {
         return projects;
     }
 
-    
+    public StartupProject getProductByID(String id) {
+        StartupProject projects = null;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBUtils.getConnection();
+            ps = conn.prepareStatement(GET_PRODUCT_BY_ID);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                projects = new StartupProject(
+                        rs.getInt("project_id"),
+                        rs.getString("project_name"),
+                        rs.getString("Description"),
+                        rs.getString("Status"),
+                        rs.getDate("estimated_launch"));
+                
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getProjectId(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+
+        return projects;
+    }
 
     public List<StartupProject> getProjectByName(String keyword) {
 
@@ -124,7 +153,7 @@ public class StartupProjectDAO {
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             if (rs.next()) {
-                projectId = rs.getInt("max_id");
+                projectId = rs.getInt("max_id") + 1;
             }
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(StartupProjectDAO.class.getName()).log(Level.SEVERE, null, ex);

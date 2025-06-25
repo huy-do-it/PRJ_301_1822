@@ -25,6 +25,9 @@ public class StartupProject {
         this.estimatedLaunch = estimatedLaunch;
     }
 
+    public StartupProject() {
+    }
+
     public int getProjectId() {
         return projectId;
     }

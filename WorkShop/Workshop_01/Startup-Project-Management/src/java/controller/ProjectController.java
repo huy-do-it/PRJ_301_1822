@@ -90,49 +90,122 @@ public class ProjectController extends HttpServlet {
     private String handleProjectSearching(HttpServletRequest request, HttpServletResponse response) {
         String keyword = request.getParameter("keyword");
         List<StartupProject> project = spdao.getProjectByName(keyword);
+
         request.setAttribute("keyword", keyword);
-        request.setAttribute("project", project);
+        request.setAttribute("projects", project);
 
         return "welcome.jsp";
     }
 
+    // Create new project
     private String handleProjectCreating(HttpServletRequest request, HttpServletResponse response) {
-        // remember create a method check error for update & create status
+        String url = "actionProject.jsp";
         if (authUtils.isAdmin(request)) {
-            String checkError = "";
-            String message = "";
 
-            String projectName = request.getParameter("name");
-            String description = request.getParameter("description");
-            String status = request.getParameter("status");
-            Date estimatedLaunch = Date.valueOf(request.getParameter("estimatedLaunch"));
+            // valid form
+            String error = validateProjectForm(request);
+            if (!error.isEmpty()) {
+                request.setAttribute("checkError", error);
+                url = "actionProject.jsp";
+            }
+
+            //create project
+            StartupProject project = buildProjectFromRequest(request, true);
+
+            if (spdao.Create(project)) {
+                request.setAttribute("message", "Create project successfully!");
+                //clear form input
+                request.removeAttribute("inputName");
+                request.removeAttribute("inputDescription");
+                request.removeAttribute("inputStatus");
+                request.removeAttribute("inputEstimatedLaunch");
+            } else {
+                request.setAttribute("checkError", "Failed to create project!");
+            }
+        }
+        return url;
+    }
+
+    //update project
+    private String handleProjectUpdating(HttpServletRequest request, HttpServletResponse response) {
+        String url = "actionProject.jsp";
+        if (authUtils.isAdmin(request)) {
+
+            //validate form
+            String error = validateProjectForm(request);
+            if (!error.isEmpty()) {
+                request.setAttribute("isEdit", true);
+                return url;
+            }
+
+            // upate project
+            StartupProject project = buildProjectFromRequest(request, false);
+            
+            if (spdao.update(project)) {
+                request.setAttribute("projects", project);
+            } else {
+                request.setAttribute("checkError", "Failed to update project!");
+                request.setAttribute("isEdit", true);
+                url = "actionProject.jsp";
+            }
+
+        }
+        return url;
+    }
+
+    private StartupProject buildProjectFromRequest(HttpServletRequest req, boolean isCreate) {
+        String name = req.getParameter("name").trim();
+        String desc = req.getParameter("description").trim();
+        String status = req.getParameter("status").trim();
+        String dateStr = req.getParameter("estimatedLaunch").trim();
+
+        int id = isCreate ? spdao.CreateId() : Integer.parseInt(req.getParameter("projectId"));
+        Date launchDate = Date.valueOf(dateStr);
+
+        return new StartupProject(id, name, desc, status, launchDate);
+    }
+
+    private String validateProjectForm(HttpServletRequest request) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        // Lấy dữ liệu từ form
+        String projectName = request.getParameter("name");
+        String description = request.getParameter("description");
+        String status = request.getParameter("status");
+        String estimatedLaunchStr = request.getParameter("estimatedLaunch");
+
+        // Lưu lại dữ liệu để hiển thị khi có lỗi
+        request.setAttribute("inputName", projectName);
+        request.setAttribute("inputDescription", description);
+        request.setAttribute("inputStatus", status);
+        request.setAttribute("inputEstimatedLaunch", estimatedLaunchStr);
+
+        // Validate project name
+        if (projectName == null || projectName.trim().isEmpty() || projectName.trim().length() < 3 || projectName.trim().length() > 100) {
+            errorMessage.append("Project name must be between 3 and 100 characters!<br/>");
+        }
+
+        // Validate description
+        if (description == null || description.trim().isEmpty() || description.trim().length() < 5) {
+            errorMessage.append("Project description must be at least 5 characters!<br/>");
+        }
+
+        try {
+            Date estimatedLaunch = Date.valueOf(estimatedLaunchStr);
             Date today = Date.valueOf(LocalDate.now());
 
-            if (projectName.isEmpty()) {
-                checkError = "Project name cannot emplty ";
-            } else if (estimatedLaunch.before(today)) {
-                checkError = "Launch date must be in the future.";
+            if (!estimatedLaunch.after(today)) {
+                errorMessage.append("Launch date must be in the future!<br/>");
             }
-            if (checkError.isEmpty()) {
-                message = "Add project successfully!";
-            }
-            
-            StartupProject sp = new StartupProject(spdao.CreateId(), projectName, description, status, estimatedLaunch);
-
-            if (!spdao.Create(sp)) {
-                checkError += "<br/>Cannot Create new project!!!";
-            }
-            
-            request.setAttribute("project", sp);
-            request.setAttribute("message", message);
-            request.setAttribute("checkError", checkError);
+        } catch (Exception e) {
+            errorMessage.append("Invalid date format!<br/>");
         }
-        return "actionProject.jsp";
+
+        String error = errorMessage.toString();
+        if (!error.isEmpty()) {
+            request.setAttribute("checkError", error);
+        }
+
+        return error;
     }
-
-    private String handleProjectUpdating(HttpServletRequest request, HttpServletResponse response) {
-
-        return "actionProject.jsp";
-    }
-
 }

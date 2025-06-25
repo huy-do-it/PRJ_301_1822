@@ -25,9 +25,8 @@ CREATE TABLE tblStartupProjects (
 
 
 INSERT INTO tblUsers (Username, Name, Password, Role) VALUES
-('HuyDT', 'Admin Dep Trai', 'deptrai', 'Founder'),
-('AEBonPhuong', 'Anh Em', 'anhem', 'Team Member');
-
+('HuyDT', 'Admin', '123', 'Founder'),
+('Member', 'member01', '123', 'Team Member');
 
 
 INSERT INTO tblStartupProjects (project_id, project_name, Description, Status, estimated_launch) VALUES
