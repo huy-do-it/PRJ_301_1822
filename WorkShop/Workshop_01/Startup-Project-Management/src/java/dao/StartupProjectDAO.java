@@ -21,6 +21,7 @@ public class StartupProjectDAO {
     private static final String UPDATE_PRODUCT = "UPDATE tblStartupProjects SET [project_name] = ?, [Description] = ?, [Status] = ?, [estimated_launch] = ? WHERE project_id = ? ";
     private static final String CREATE_PRODUCT = "INSERT INTO tblStartupProjects (project_id, project_name, Description, Status, estimated_launch) VALUES (?, ?, ?, ?, ?) ";
     private static final String GET_PRODUCT_BY_ID = "SELECT * FROM tblStartupProjects WHERE project_id = ? ";
+
     public List<StartupProject> getAll() {
 
         List<StartupProject> projects = new ArrayList<>();
@@ -50,7 +51,7 @@ public class StartupProjectDAO {
         return projects;
     }
 
-    public StartupProject getProductByID(String id) {
+    public StartupProject getProjectById(int id) {
         StartupProject projects = null;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -59,17 +60,17 @@ public class StartupProjectDAO {
         try {
             conn = DBUtils.getConnection();
             ps = conn.prepareStatement(GET_PRODUCT_BY_ID);
-            ps.setString(1, id);
+            ps.setInt(1, id);
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                projects = new StartupProject(
-                        rs.getInt("project_id"),
-                        rs.getString("project_name"),
-                        rs.getString("Description"),
-                        rs.getString("Status"),
-                        rs.getDate("estimated_launch"));
-                
+                projects = new StartupProject();
+                projects.setProjectId(rs.getInt("project_id"));
+                projects.setProjectName(rs.getString("project_name"));
+                projects.setDescription(rs.getString("Description"));
+                projects.setStatus(rs.getString("Status"));
+                projects.setEstimatedLaunch(rs.getDate("estimated_launch"));
+
             }
         } catch (Exception e) {
             System.err.println("Error in getProjectId(): " + e.getMessage());
@@ -140,7 +141,6 @@ public class StartupProjectDAO {
 
         return success;
     }
-    
 
     public int CreateId() {
         String query = "SELECT MAX(project_id) as max_id FROM tblStartupProjects ";
@@ -157,38 +157,38 @@ public class StartupProjectDAO {
             }
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(StartupProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally {
+        } finally {
             closeResources(conn, ps, rs);
         }
-        
+
         return projectId;
     }
-    
+
     public boolean Create(StartupProject sp) {
-        
+
         Connection conn = null;
         PreparedStatement ps = null;
         boolean success = false;
-        
+
         try {
             conn = DBUtils.getConnection();
             ps = conn.prepareStatement(CREATE_PRODUCT);
-            
+
             ps.setInt(1, sp.getProjectId());
             ps.setString(2, sp.getProjectName());
             ps.setString(3, sp.getDescription());
             ps.setString(4, sp.getStatus());
             ps.setDate(5, sp.getEstimatedLaunch());
-            
-            success = (ps.executeUpdate() > 0); 
-            
+
+            success = (ps.executeUpdate() > 0);
+
         } catch (Exception e) {
         } finally {
             closeResources(conn, ps, null);
         }
         return success;
     }
-    
+
     /**
      * Close database resources safely
      *
@@ -213,5 +213,4 @@ public class StartupProjectDAO {
         }
     }
 
-    
 }

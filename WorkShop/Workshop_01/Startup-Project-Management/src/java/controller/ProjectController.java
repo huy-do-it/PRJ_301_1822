@@ -101,20 +101,18 @@ public class ProjectController extends HttpServlet {
     private String handleProjectCreating(HttpServletRequest request, HttpServletResponse response) {
         String url = "actionProject.jsp";
         if (authUtils.isAdmin(request)) {
-
             // valid form
             String error = validateProjectForm(request);
             if (!error.isEmpty()) {
                 request.setAttribute("checkError", error);
-                url = "actionProject.jsp";
+                return url;
             }
-
             //create project
             StartupProject project = buildProjectFromRequest(request, true);
 
             if (spdao.Create(project)) {
                 request.setAttribute("message", "Create project successfully!");
-                //clear form input
+
                 request.removeAttribute("inputName");
                 request.removeAttribute("inputDescription");
                 request.removeAttribute("inputStatus");
@@ -130,25 +128,28 @@ public class ProjectController extends HttpServlet {
     private String handleProjectUpdating(HttpServletRequest request, HttpServletResponse response) {
         String url = "actionProject.jsp";
         if (authUtils.isAdmin(request)) {
-
-            //validate form
-            String error = validateProjectForm(request);
-            if (!error.isEmpty()) {
-                request.setAttribute("isEdit", true);
+            // 1. Nếu chưa submit, chỉ nhấn Edit, chỉ có projectId
+            request.setAttribute("isEdit", true);
+            String name = request.getParameter("name");
+            String projectIdStr = request.getParameter("projectId");
+            int projectId = Integer.parseInt(projectIdStr);
+            if (name == null && projectIdStr != null) { // --> chưa submit form, chỉ nhấn Edit thôi
+                StartupProject project = spdao.getProjectById(projectId);
+                request.setAttribute("projects", project); // chú ý biến là 'projects' theo JSP
                 return url;
             }
-
-            // upate project
-            StartupProject project = buildProjectFromRequest(request, false);
-            
-            if (spdao.update(project)) {
-                request.setAttribute("projects", project);
-            } else {
-                request.setAttribute("checkError", "Failed to update project!");
-                request.setAttribute("isEdit", true);
-                url = "actionProject.jsp";
+            // sau khi submit tiến hành validate và update
+            StartupProject project = spdao.getProjectById(projectId);
+            String error = validateProjectForm(request);
+            request.setAttribute("projects", project);
+            if (error.isEmpty()) {
+                project = buildProjectFromRequest(request, false);
+                if (spdao.update(project)) {
+                    request.setAttribute("message", "Update project successfully!");
+                } else {
+                    request.setAttribute("checkError", "Failed to update project!");
+                }
             }
-
         }
         return url;
     }
@@ -166,46 +167,49 @@ public class ProjectController extends HttpServlet {
     }
 
     private String validateProjectForm(HttpServletRequest request) {
-        StringBuilder errorMessage = new StringBuilder();
+        boolean hasError = false;
 
-        // Lấy dữ liệu từ form
+        // Project Name
         String projectName = request.getParameter("name");
-        String description = request.getParameter("description");
-        String status = request.getParameter("status");
-        String estimatedLaunchStr = request.getParameter("estimatedLaunch");
+        if (projectName == null || projectName.trim().isEmpty() || projectName.trim().length() < 3 || projectName.trim().length() > 100) {
+            request.setAttribute("errorName", "Project name must be between 3 and 100 characters!");
+            hasError = true;
+        }
 
-        // Lưu lại dữ liệu để hiển thị khi có lỗi
+        // Description
+        String description = request.getParameter("description");
+        if (description == null || description.trim().isEmpty() || description.trim().length() < 5) {
+            request.setAttribute("errorDescription", "Project description must be at least 5 characters!");
+            hasError = true;
+        }
+
+        // Status
+        String status = request.getParameter("status");
+        if (status == null || status.trim().isEmpty()) {
+            request.setAttribute("errorStatus", "Status must be selected!");
+            hasError = true;
+        }
+
+        // Estimated Launch
+        String estimatedLaunchStr = request.getParameter("estimatedLaunch");
+        try {
+            Date estimatedLaunch = Date.valueOf(estimatedLaunchStr);
+            Date today = Date.valueOf(LocalDate.now());
+            if (!estimatedLaunch.after(today)) {
+                request.setAttribute("errorEstimatedLaunch", "Launch date must be in the future!");
+                hasError = true;
+            }
+        } catch (Exception e) {
+            request.setAttribute("errorEstimatedLaunch", "Invalid date format!");
+            hasError = true;
+        }
+
+        // Giữ lại input cũ khi sai input
         request.setAttribute("inputName", projectName);
         request.setAttribute("inputDescription", description);
         request.setAttribute("inputStatus", status);
         request.setAttribute("inputEstimatedLaunch", estimatedLaunchStr);
 
-        // Validate project name
-        if (projectName == null || projectName.trim().isEmpty() || projectName.trim().length() < 3 || projectName.trim().length() > 100) {
-            errorMessage.append("Project name must be between 3 and 100 characters!<br/>");
-        }
-
-        // Validate description
-        if (description == null || description.trim().isEmpty() || description.trim().length() < 5) {
-            errorMessage.append("Project description must be at least 5 characters!<br/>");
-        }
-
-        try {
-            Date estimatedLaunch = Date.valueOf(estimatedLaunchStr);
-            Date today = Date.valueOf(LocalDate.now());
-
-            if (!estimatedLaunch.after(today)) {
-                errorMessage.append("Launch date must be in the future!<br/>");
-            }
-        } catch (Exception e) {
-            errorMessage.append("Invalid date format!<br/>");
-        }
-
-        String error = errorMessage.toString();
-        if (!error.isEmpty()) {
-            request.setAttribute("checkError", error);
-        }
-
-        return error;
+        return hasError ? "error" : "";
     }
 }
