@@ -31,7 +31,7 @@ public class ProjectController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = "";
+        String url = "welcome.jsp";
         try {
             String action = request.getParameter("action");
             if ("searchProject".equals(action)) {
