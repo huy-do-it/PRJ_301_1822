@@ -400,17 +400,18 @@
 
                 </div>
                 <div class="main-content">
-                    <div class="search-section">
-                        <form action="MainController" method="get" class="search-form"> 
-                            <input type="hidden" name="action" value="searchProject"/>
-                            <label class="search-label">Search product by name:</label>
-                            <input type="text" name="keyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" 
-                                   class="search-input" placeholder="Seach project by name..."/>
-                            <input type="submit" value="Search" class="search-btn"/>
-                        </form>
-                    </div>
-
                     <c:if test="${sessionScope.user.role eq 'Founder'}">
+                        <div class="search-section">
+                            <form action="MainController" method="get" class="search-form"> 
+                                <input type="hidden" name="action" value="searchProject"/>
+                                <label class="search-label">Search product by name:</label>
+                                <input type="text" name="keyword" value="${not empty requestScope.keyword ? requestScope.keyword : ''}" 
+                                       class="search-input" placeholder="Seach project by name..."/> <!-- giữ lại cái keyword khi search -->
+                                <input type="submit" value="Search" class="search-btn"/>
+                            </form>
+                        </div>
+
+
                         <a href="actionProject.jsp" class="create-btn">Create Project</a>  
                     </c:if>
                     <div class="table-container">

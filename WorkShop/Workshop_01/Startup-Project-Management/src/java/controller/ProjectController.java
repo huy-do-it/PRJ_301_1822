@@ -88,11 +88,16 @@ public class ProjectController extends HttpServlet {
     }// </editor-fold>
 
     private String handleProjectSearching(HttpServletRequest request, HttpServletResponse response) {
-        String keyword = request.getParameter("keyword");
-        List<StartupProject> project = spdao.getProjectByName(keyword);
+        if(authUtils.isAdmin(request)){
+            String keyword = request.getParameter("keyword");
+            List<StartupProject> project = spdao.getProjectByName(keyword);
 
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("projects", project);
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("projects", project);
+        }else{
+            List<StartupProject> project = spdao.getAll();
+            request.setAttribute("projects", project);
+        }
 
         return "welcome.jsp";
     }
@@ -103,22 +108,20 @@ public class ProjectController extends HttpServlet {
         if (authUtils.isAdmin(request)) {
             // valid form
             String error = validateProjectForm(request);
-            if (!error.isEmpty()) {
-                request.setAttribute("checkError", error);
-                return url;
-            }
-            //create project
-            StartupProject project = buildProjectFromRequest(request, true);
+            if (error.isEmpty()) {
+                //create project
+                StartupProject project = buildProjectFromRequest(request, true);
 
-            if (spdao.Create(project)) {
-                request.setAttribute("message", "Create project successfully!");
+                if (spdao.Create(project)) {
+                    request.setAttribute("message", "Create project successfully!");
 
-                request.removeAttribute("inputName");
-                request.removeAttribute("inputDescription");
-                request.removeAttribute("inputStatus");
-                request.removeAttribute("inputEstimatedLaunch");
-            } else {
-                request.setAttribute("checkError", "Failed to create project!");
+                    request.removeAttribute("inputName");
+                    request.removeAttribute("inputDescription");
+                    request.removeAttribute("inputStatus");
+                    request.removeAttribute("inputEstimatedLaunch");
+                } else {
+                    request.setAttribute("checkError", "Failed to create project!");
+                }
             }
         }
         return url;
@@ -128,7 +131,7 @@ public class ProjectController extends HttpServlet {
     private String handleProjectUpdating(HttpServletRequest request, HttpServletResponse response) {
         String url = "actionProject.jsp";
         if (authUtils.isAdmin(request)) {
-            // 1. Nếu chưa submit, chỉ nhấn Edit, chỉ có projectId
+
             request.setAttribute("isEdit", true);
             String name = request.getParameter("name");
             String projectIdStr = request.getParameter("projectId");
