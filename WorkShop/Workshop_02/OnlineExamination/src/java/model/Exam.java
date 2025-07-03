@@ -13,18 +13,18 @@ public class Exam {
     private String examTitle;
     private String subject;
     private int categoryId;
-    private int totalMark;
+    private int totalMarks;
     private int duration;
 
     public Exam() {
     }
 
-    public Exam(int examId, String examTitle, String subject, int categoryId, int totalMark, int duration) {
+    public Exam(int examId, String examTitle, String subject, int categoryId, int totalMarks, int duration) {
         this.examId = examId;
         this.examTitle = examTitle;
         this.subject = subject;
         this.categoryId = categoryId;
-        this.totalMark = totalMark;
+        this.totalMarks = totalMarks;
         this.duration = duration;
     }
 
@@ -60,12 +60,12 @@ public class Exam {
         this.categoryId = categoryId;
     }
 
-    public int getTotalMark() {
-        return totalMark;
+    public int getTotalMarks() {
+        return totalMarks;
     }
 
     public void setTotalMark(int totalMark) {
-        this.totalMark = totalMark;
+        this.totalMarks = totalMark;
     }
 
     public int getDuration() {

@@ -23,7 +23,7 @@ public class MainController extends HttpServlet {
     }
     
     private boolean isExamAction(String action) {
-        return "view".equals(action);
+        return "create".equals(action) ;
     }
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

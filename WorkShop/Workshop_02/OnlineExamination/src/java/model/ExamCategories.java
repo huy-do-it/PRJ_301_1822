@@ -8,15 +8,15 @@ package model;
  *
  * @author ddhuy
  */
-public class ExamCategorie {
+public class ExamCategories {
     private int categoryId;
     private String categoryName;
     private String description;
 
-    public ExamCategorie() {
+    public ExamCategories() {
     }
 
-    public ExamCategorie(int categoryId, String categoryName, String description) {
+    public ExamCategories(int categoryId, String categoryName, String description) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.description = description;

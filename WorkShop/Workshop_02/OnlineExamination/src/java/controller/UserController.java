@@ -1,5 +1,6 @@
 package controller;
 
+import dao.ExamCategoriesDAO;
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,6 +10,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.ExamCategories;
 import model.User;
 
 /**
@@ -19,25 +22,25 @@ import model.User;
 public class UserController extends HttpServlet {
 
     private static String LOGIN_PAGE = "login.jsp";
+    ExamCategoriesDAO exCaDAO = new ExamCategoriesDAO();
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         String url = LOGIN_PAGE;
         String action = request.getParameter("action");
         try {
-            if("login".equals(action)){
+            if ("login".equals(action)) {
                 url = handleLogin(request, response);
-            }else if("logout".equals(request)) {
-                url = handleLogout(request, response);
+            } else if ("logout".equals(action)) {
+                url = handleLogout(request);
             }
         } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
-    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -79,28 +82,30 @@ public class UserController extends HttpServlet {
     }// </editor-fold>
 
     private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
-        
+
         String url = LOGIN_PAGE;
         UserDAO udao = new UserDAO();
         HttpSession session = request.getSession();
         String userName = request.getParameter("userName");
         String pasword = request.getParameter("password");
-        
+
         if (udao.isLogin(userName, pasword)) {
             User user = udao.getUserbyUserName(userName);
             session.setAttribute("user", user);
+            List<ExamCategories> list = exCaDAO.getAll();
+            request.setAttribute("categories", list);
             url = "welcome.jsp";
-        }else{
+        } else {
             url = LOGIN_PAGE;
             session.setAttribute("errMessage", "User Name or Password incorrect");
         }
-        
-        return url;
-     }
 
-    private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
+        return url;
+    }
+
+    private String handleLogout(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        
+
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
