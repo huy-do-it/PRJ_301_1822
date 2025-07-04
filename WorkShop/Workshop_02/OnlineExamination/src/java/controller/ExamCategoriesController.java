@@ -56,6 +56,10 @@ public class ExamCategoriesController extends HttpServlet {
                 url = handleShowAddQuestionForm(request);
             } else if ("add-question".equals(action)) { // xử lý submit thêm câu hỏi
                 url = handleAddQuestion(request);
+            } else if ("take-exam".equals(action)) {
+                url = handleExamTaking(request);
+            } else if ("submit-exam".equals(action)) {
+                url = handleExamSubmission(request);
             }
         } catch (Exception e) {
             request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
@@ -166,7 +170,7 @@ public class ExamCategoriesController extends HttpServlet {
 
         // Sau khi tạo xong, load lại dashboard với categories
         request.setAttribute("categories", exCaDAO.getAll());
-        return DASHBOARD_PAGE;
+        return CREATE_PAGE;
     }
 
     // Hiển thị Exam theo Category được chọn từ dashboard (filter mới)
@@ -278,5 +282,70 @@ public class ExamCategoriesController extends HttpServlet {
         request.setAttribute("exam", exam);
         request.setAttribute("questions", questions);
         return ADD_QUESTION_PAGE;
+    }
+
+    private String handleExamTaking(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        if (user == null || !"Student".equals(user.getRole())) {
+            request.setAttribute("errorMessage", "Only students can take exams.");
+            return DASHBOARD_PAGE;
+        }
+        String examIdStr = request.getParameter("examId");
+        int examId = 0;
+        try {
+            examId = Integer.parseInt(examIdStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid Exam ID.");
+            return DASHBOARD_PAGE;
+        }
+
+        Exam exam = examDAO.getExamById(examId);
+        if (exam == null) {
+            request.setAttribute("errorMessage", "Exam not found.");
+            return DASHBOARD_PAGE;
+        }
+        List<Questions> questions = queDAO.getQuestionsByExamId(examId);
+        if (questions == null || questions.isEmpty()) {
+            request.setAttribute("errorMessage", "No questions found for this exam.");
+            return DASHBOARD_PAGE;
+        }
+        // Đưa dữ liệu sang trang làm bài
+        request.setAttribute("exam", exam);
+        request.setAttribute("questions", questions);
+        return "takeExam.jsp";
+    }
+
+    private String handleExamSubmission(HttpServletRequest request) {
+        String examIdStr = request.getParameter("examId");
+        int examId = 0;
+        try {
+            examId = Integer.parseInt(examIdStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid Exam ID.");
+            return DASHBOARD_PAGE;
+        }
+        List<Questions> questions = queDAO.getQuestionsByExamId(examId);
+        if (questions == null || questions.isEmpty()) {
+            request.setAttribute("errorMessage", "No questions found for this exam.");
+            return DASHBOARD_PAGE;
+        }
+        int score = 0;
+        int total = questions.size();
+        Map<Integer, String> studentAnswers = new HashMap<>();
+        for (Questions q : questions) {
+            String answer = request.getParameter("answer_" + q.getQuestionId());
+            studentAnswers.put(q.getQuestionId(), answer);
+            if (q.getCorrectOption().equals(answer)) {
+                score++;
+            }
+        }
+        request.setAttribute("score", score);
+        request.setAttribute("total", total);
+        request.setAttribute("questions", questions);
+        request.setAttribute("studentAnswers", studentAnswers);
+        Exam exam = examDAO.getExamById(examId);
+        request.setAttribute("exam", exam);
+        return "examResult.jsp";
     }
 }

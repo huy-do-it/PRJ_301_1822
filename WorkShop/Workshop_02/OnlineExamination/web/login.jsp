@@ -273,7 +273,7 @@
             </div>
             
             <div class="login-form">
-                <form action="MainController" method="get">
+                <form action="MainController" method="post">
                     <input type="hidden" name="action" value="login" />
                     
                     <div class="form-group">
